@@ -13,7 +13,7 @@ model Kanji {
   description  String              @db.Text
   kunyomi      Kunyomi[]
   onyomi       Onyomi[]
-  meaning      Meaning[]
+  meanings     Meaning[]
   similarKanji SimilarKanji[]
   userProgress UserKanjiProgress[]
 }
@@ -55,14 +55,13 @@ model SimilarKanji {
 }
 
 // User Model
-
 model User {
   id            Int                 @id @default(autoincrement())
   email         String              @unique
   name          String?
   username      String              @unique
   password      String
-  kanjiProgress UserKanjiProgress[]
+  kanjiProgress UserKanjiProgress[] // Relation to user kanji progress
   createdAt     DateTime            @default(now())
   updatedAt     DateTime            @updatedAt
   role          Role                @default(USER)
