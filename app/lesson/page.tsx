@@ -20,7 +20,7 @@ interface UserKanjiProgress {
     id: number;
     kanji: string; // The kanji character
     description: string;
-    meaning: Meaning[]; // Include meaning as an array
+    meanings: Meaning[]; // Include meaning as an array
     kunyomi: Array<{ id: number; value: string }>; // Update kunyomi type if necessary
     onyomi: Array<{ id: number; value: string }>; // Update onyomi type if necessary
     similarKanji: Array<{ id: number; value: string }>; // Update similarKanji type if necessary
@@ -62,7 +62,7 @@ export default function Lesson() {
     if (!currentKanji) return;
 
     // Extract the correct meaning from the current kanji object
-    const correctMeaning = currentKanji.kanji.meaning[0]?.value.toLowerCase(); // Get the first meaning
+    const correctMeaning = currentKanji.kanji.meanings[0]?.value.toLowerCase(); // Get the first meaning
 
     // Check if the user's input matches the correct meaning
     const isCorrect = userInput.trim().toLowerCase() === correctMeaning;

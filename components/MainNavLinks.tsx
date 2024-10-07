@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const MainNavLinks = () => {
   const links = [
     { label: "Dashboard", href: "/" },
-    { label: "Kanji", href: "/tickets" },
+    { label: "Kanji", href: "/kanji" },
     { label: "Users", href: "/users" },
   ];
 
