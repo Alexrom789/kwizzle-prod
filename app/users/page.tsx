@@ -9,7 +9,6 @@ const Users = async () => {
       kanjiProgress: true,
     },
   });
-  console.log(users);
   return (
     <div>
       <UserForm />
