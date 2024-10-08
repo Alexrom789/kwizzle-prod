@@ -2,6 +2,8 @@ import React from "react";
 import DataTable from "./DataTable";
 import prisma from "@/prisma/db";
 import Pagination from "@/components/Pagination";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 interface SearchParams {
   page: string;
@@ -31,15 +33,24 @@ const Kanji = async ({ searchParams }: { searchParams: SearchParams }) => {
 
   return (
     <div>
+      <h1 className="text-xl md:text-2xl">Kanji Database</h1>
       <DataTable
         kanji={kanji}
         kanjiProgress={users[0].kanjiProgress}
       ></DataTable>
-      <Pagination
-        itemCount={kanjiCount}
-        pageSize={pageSize}
-        currentPage={page}
-      />
+      <div className="flex justify-between">
+        <Pagination
+          itemCount={kanjiCount}
+          pageSize={pageSize}
+          currentPage={page}
+        />
+        <Link
+          href="/kanji/new/"
+          className={`mt-4 ${buttonVariants({ variant: "default" })}`}
+        >
+          New Kanji
+        </Link>
+      </div>
     </div>
   );
 };

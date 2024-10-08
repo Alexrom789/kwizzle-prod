@@ -61,7 +61,7 @@ const Pagination = ({ itemCount, pageSize, currentPage }: Props) => {
           <ChevronLast />
         </Button>
       </div>
-      <div>
+      <div className="mt-3">
         <p>
           Page {currentPage} of {pageCount}{" "}
         </p>
