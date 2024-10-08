@@ -6,21 +6,21 @@ interface Props {
   params: { id: string };
 }
 
-export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const validation = kanjiSchema.safeParse(body);
+// export async function POST(request: NextRequest) {
+//   const body = await request.json();
+//   const validation = kanjiSchema.safeParse(body);
 
-  if (!validation.success) {
-    console.error("Validation error:", validation.error.format());
-    return NextResponse.json(validation.error.format(), { status: 400 });
-  }
+//   if (!validation.success) {
+//     console.error("Validation error:", validation.error.format());
+//     return NextResponse.json(validation.error.format(), { status: 400 });
+//   }
 
-  const newKanji = await prisma.kanji.create({
-    data: { ...body },
-  });
+//   const newKanji = await prisma.kanji.create({
+//     data: { ...body },
+//   });
 
-  return NextResponse.json(newKanji, { status: 201 });
-}
+//   return NextResponse.json(newKanji, { status: 201 });
+// }
 
 export async function DELETE(request: NextRequest, { params }: Props) {
   const kanji = await prisma.kanji.findUnique({
