@@ -23,16 +23,40 @@ interface Props {
 // }
 
 export async function DELETE(request: NextRequest, { params }: Props) {
+  const kanjiId = parseInt(params.id);
+
   const kanji = await prisma.kanji.findUnique({
-    where: { id: parseInt(params.id) },
+    where: { id: kanjiId },
   });
 
   if (!kanji) {
     return NextResponse.json({ error: "Kanji Not Found" }, { status: 404 });
   }
 
+  // First, delete all related records
+  await prisma.kunyomi.deleteMany({
+    where: { kanjiId },
+  });
+
+  await prisma.onyomi.deleteMany({
+    where: { kanjiId },
+  });
+
+  await prisma.meaning.deleteMany({
+    where: { kanjiId },
+  });
+
+  await prisma.similarKanji.deleteMany({
+    where: { kanjiId },
+  });
+
+  await prisma.userKanjiProgress.deleteMany({
+    where: { kanjiId },
+  });
+
+  // Then, delete the Kanji
   await prisma.kanji.delete({
-    where: { id: kanji.id },
+    where: { id: kanjiId },
   });
 
   return NextResponse.json({ message: "Kanji Deleted" });
