@@ -6,21 +6,63 @@ interface Props {
   params: { id: string };
 }
 
-// export async function POST(request: NextRequest) {
-//   const body = await request.json();
-//   const validation = kanjiSchema.safeParse(body);
+interface KanjiBody {
+  kanji: string;
+  description: string;
+  onyomi?: { value: string }[];
+  kunyomi?: { value: string }[];
+  meanings?: { value: string }[];
+  similarKanji?: { value: string }[];
+}
 
-//   if (!validation.success) {
-//     console.error("Validation error:", validation.error.format());
-//     return NextResponse.json(validation.error.format(), { status: 400 });
-//   }
+export async function PATCH(request: NextRequest, { params }: Props) {
+  const body: KanjiBody = await request.json();
+  const validation = kanjiSchema.safeParse(body);
 
-//   const newKanji = await prisma.kanji.create({
-//     data: { ...body },
-//   });
+  if (!validation.success) {
+    return NextResponse.json(validation.error.format(), { status: 400 });
+  }
 
-//   return NextResponse.json(newKanji, { status: 201 });
-// }
+  const kanji = await prisma.kanji.findUnique({
+    where: { id: parseInt(params.id) },
+    include: {
+      onyomi: true,
+      kunyomi: true,
+      meanings: true,
+      similarKanji: true,
+    },
+  });
+
+  if (!kanji) {
+    return NextResponse.json({ error: "Kanji Not Found" }, { status: 404 });
+  }
+
+  const updateTicket = await prisma.kanji.update({
+    where: { id: kanji.id },
+    data: {
+      kanji: body.kanji,
+      description: body.description,
+      onyomi: {
+        deleteMany: {}, // Delete existing ones first
+        create: body.onyomi?.map((o) => ({ value: o.value })),
+      },
+      kunyomi: {
+        deleteMany: {}, // Delete existing ones first
+        create: body.kunyomi?.map((k) => ({ value: k.value })),
+      },
+      meanings: {
+        deleteMany: {}, // Delete existing ones first
+        create: body.meanings?.map((m) => ({ value: m.value })),
+      },
+      similarKanji: {
+        deleteMany: {}, // Delete existing ones first
+        create: body.similarKanji?.map((s) => ({ value: s.value })),
+      },
+    },
+  });
+
+  return NextResponse.json(updateTicket);
+}
 
 export async function DELETE(request: NextRequest, { params }: Props) {
   const kanjiId = parseInt(params.id);

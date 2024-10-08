@@ -23,10 +23,10 @@ interface KanjiWithRelations extends Kanji {
 }
 
 interface Props {
-  kanji: KanjiWithRelations;
+  kanji?: KanjiWithRelations;
 }
 
-const KanjiForm = () => {
+const KanjiForm = ({ kanji }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -35,36 +35,23 @@ const KanjiForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof kanjiSchema>) {
+    const transformedValues = {
+      kanji: values.kanji,
+      description: values.description,
+      onyomi: values.onyomi || [],
+      kunyomi: values.kunyomi || [],
+      meanings: values.meanings || [],
+      similarKanji: values.similarKanji || [],
+    };
+
     try {
       setIsSubmitting(true);
       setError("");
-      // if (kanji) {
-      //   await axios.patch("/api/kanji/" + kanji.id, values);
-      // } else {
-      //   await axios.post("/api/kanji", values);
-      // }
-      //     await axios.post("/api/kanji/", values);
-      //     setIsSubmitting(false);
-      //     router.push("/kanji");
-      //     router.refresh();
-      //   } catch (error) {
-      //     setError("Unknown Error Occured. ");
-      //     setIsSubmitting(false);
-      //   }
-      // }
-
-      const transformedValues = {
-        kanji: values.kanji,
-        description: values.description,
-        onyomi: values.onyomi || [],
-        kunyomi: values.kunyomi || [],
-        meanings: values.meanings || [],
-        similarKanji: values.similarKanji || [],
-      };
-
-      console.log("error", error);
-
-      await axios.post("/api/kanji", transformedValues);
+      if (kanji) {
+        await axios.patch("/api/kanji/" + kanji.id, transformedValues);
+      } else {
+        await axios.post("/api/kanji", transformedValues);
+      }
       setIsSubmitting(false);
       router.push("/kanji");
       router.refresh();
@@ -85,7 +72,7 @@ const KanjiForm = () => {
             <FormField
               control={form.control}
               name="kanji"
-              // defaultValue={kanji.kanji}
+              defaultValue={kanji?.kanji}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Kanji Character</FormLabel>
@@ -101,6 +88,7 @@ const KanjiForm = () => {
               <Controller
                 name="onyomi"
                 control={form.control}
+                defaultValue={kanji?.onyomi}
                 render={({ field }) => (
                   <FormControl>
                     <Input
@@ -129,6 +117,7 @@ const KanjiForm = () => {
               <Controller
                 name="kunyomi"
                 control={form.control}
+                defaultValue={kanji?.kunyomi}
                 render={({ field }) => (
                   <FormControl>
                     <Input
@@ -157,6 +146,7 @@ const KanjiForm = () => {
               <Controller
                 name="meanings"
                 control={form.control}
+                defaultValue={kanji?.meanings}
                 render={({ field }) => (
                   <FormControl>
                     <Input
@@ -185,6 +175,7 @@ const KanjiForm = () => {
               <Controller
                 name="similarKanji"
                 control={form.control}
+                defaultValue={kanji?.similarKanji}
                 render={({ field }) => (
                   <FormControl>
                     <Input
@@ -210,18 +201,17 @@ const KanjiForm = () => {
           </div>
           <Controller
             name="description"
-            // defaultValue={kanji?.description}
+            defaultValue={kanji?.description}
             control={form.control}
             render={({ field }) => (
               <SimpleMDE placeholder="Description" {...field} />
             )}
           />
-          {/* <Button type="submit">{kanji ? "Update Kanji" : "Add Kanji"}</Button> */}
           <Button
             type="submit"
             disabled={isSubmitting || !form.formState.isValid}
           >
-            Add Kanji
+            {kanji ? "Update Kanji" : "Add Kanji"}
           </Button>
         </form>
       </Form>

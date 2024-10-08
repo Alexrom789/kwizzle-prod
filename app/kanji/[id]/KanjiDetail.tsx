@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/card";
 import KanjiStatusBadge from "@/components/KanjiStatusBadge";
 import DeleteButton from "./DeleteButton";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 interface KanjiWithRelations extends Kanji {
   kunyomi: Kunyomi[];
@@ -98,6 +100,14 @@ const KanjiDetail = ({ kanji, kanjiProgress }: Props) => {
         </CardContent>
       </Card>
       <div className="mx-4 flex flex-col lg:flex-col lg:mx-0 gap-2">
+        <Link
+          href={`/kanji/edit/${kanji.id}`}
+          className={`${buttonVariants({
+            variant: "default",
+          })}`}
+        >
+          Edit Kanji
+        </Link>
         <DeleteButton kanjiId={kanji.id} />
       </div>
     </div>
