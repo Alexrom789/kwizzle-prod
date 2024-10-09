@@ -215,6 +215,9 @@ const KanjiForm = ({ kanji }: Props) => {
           </Button>
         </form>
       </Form>
+      {error && (
+        <p className="text-destructive">{`${error} Please make sure you are logged in.`}</p>
+      )}
     </div>
   );
 };

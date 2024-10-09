@@ -3,11 +3,11 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const MainNavLinks = () => {
+const MainNavLinks = ({ role }: { role?: string }) => {
   const links = [
-    { label: "Dashboard", href: "/" },
-    { label: "Kanji", href: "/kanji" },
-    { label: "Users", href: "/users" },
+    { label: "Dashboard", href: "/", adminOnly: false },
+    { label: "Kanji", href: "/kanji", adminOnly: false },
+    { label: "Users", href: "/users", adminOnly: true },
   ];
 
   const currentPath = usePathname();
@@ -16,17 +16,19 @@ const MainNavLinks = () => {
       <Link href="/" className="mr-4">
         KWIZZLE
       </Link>
-      {links.map((link) => (
-        <Link
-          href={link.href}
-          className={`navbar-link ${
-            currentPath == link.href && "cursor-default text-primary"
-          }`}
-          key={link.label}
-        >
-          {link.label}
-        </Link>
-      ))}
+      {links
+        .filter((link) => !link.adminOnly || role === "ADMIN")
+        .map((link) => (
+          <Link
+            href={link.href}
+            className={`navbar-link ${
+              currentPath == link.href && "cursor-default text-primary"
+            }`}
+            key={link.label}
+          >
+            {link.label}
+          </Link>
+        ))}
     </div>
   );
 };

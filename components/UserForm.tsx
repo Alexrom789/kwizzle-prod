@@ -157,7 +157,9 @@ const UserForm = ({ user, onUserSubmit }: Props) => {
           </Button>
         </form>
       </Form>
-      <p className="text-destructive">{error}</p>
+      {error && (
+        <p className="text-destructive">{`${error} Please make sure you are logged in as an Admin.`}</p>
+      )}
     </div>
   );
 };

@@ -1,6 +1,8 @@
 import { kanjiSchema } from "@/ValidationSchemas/kanji";
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/prisma/db";
+import { getServerSession } from "next-auth";
+import options from "../../auth/[...nextauth]/options";
 
 interface Props {
   params: { id: string };
@@ -16,6 +18,12 @@ interface KanjiBody {
 }
 
 export async function PATCH(request: NextRequest, { params }: Props) {
+  const session = await getServerSession(options);
+
+  if (!session) {
+    return NextResponse.json({ error: "Not Authenticated" }, { status: 401 });
+  }
+
   const body: KanjiBody = await request.json();
   const validation = kanjiSchema.safeParse(body);
 
@@ -65,6 +73,12 @@ export async function PATCH(request: NextRequest, { params }: Props) {
 }
 
 export async function DELETE(request: NextRequest, { params }: Props) {
+  const session = await getServerSession(options);
+
+  if (!session) {
+    return NextResponse.json({ error: "Not Authenticated" }, { status: 401 });
+  }
+
   const kanjiId = parseInt(params.id);
 
   const kanji = await prisma.kanji.findUnique({
