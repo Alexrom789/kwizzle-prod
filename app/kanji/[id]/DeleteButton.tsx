@@ -41,7 +41,7 @@ const DeleteButton = ({ kanjiId }: { kanjiId: number }) => {
           })}
           disabled={isDeleting}
         >
-          Delete Ticket
+          Delete Kanji
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>

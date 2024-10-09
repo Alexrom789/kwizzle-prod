@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../prisma/db";
 import { KanjiLevel } from "../../../lib/kanjiLevels";
+import { getServerSession } from "next-auth";
+import options from "../auth/[...nextauth]/options";
 
 const levelMapping = {
   NEW: 1,
@@ -10,7 +12,15 @@ const levelMapping = {
 };
 
 export async function GET(req: Request) {
-  const userId = 1; // Assuming only one user for now
+  const session = await getServerSession(options);
+  const userId = session?.user.id;
+
+  if (!userId) {
+    return NextResponse.json(
+      { message: "User not authenticated" },
+      { status: 401 }
+    );
+  }
 
   try {
     const userProgress = await prisma.userKanjiProgress.findMany({
@@ -18,10 +28,10 @@ export async function GET(req: Request) {
       include: {
         kanji: {
           include: {
-            meanings: true, // Include meanings
-            kunyomi: true, // Include kunyomi readings
-            onyomi: true, // Include onyomi readings
-            similarKanji: true, // Include similar kanji
+            meanings: true,
+            kunyomi: true,
+            onyomi: true,
+            similarKanji: true,
           },
         },
       },
@@ -39,7 +49,15 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const userId = 1; // Assuming only one user for now
+  const session = await getServerSession(options); // Retrieve the session
+  const userId = session?.user.id; // Access user id from the session
+
+  if (!userId) {
+    return NextResponse.json(
+      { message: "User not authenticated" },
+      { status: 401 }
+    );
+  }
 
   try {
     const { kanjiId } = await req.json();

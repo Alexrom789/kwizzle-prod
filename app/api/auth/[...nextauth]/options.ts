@@ -1,6 +1,5 @@
 import prisma from "@/prisma/db";
 import { NextAuthOptions } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
@@ -21,9 +20,11 @@ const options: NextAuthOptions = {
         const user = await prisma.user.findUnique({
           where: { username: credentials!.username },
         });
+
         if (!user) {
           return null;
         }
+
         const match = await bcrypt.compare(
           credentials!.password,
           user.password
@@ -38,13 +39,15 @@ const options: NextAuthOptions = {
   callbacks: {
     async jwt({ token, account, user }) {
       if (account) {
+        token.id = user.id;
         token.role = user.role;
       }
       return token;
     },
-    session({ session, token }) {
+    async session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role || "USER";
+        session.user.id = token.id as number; // Explicitly cast token.id as a number
+        session.user.role = token.role as string; // Explicitly cast token.role as string
       }
       return session;
     },

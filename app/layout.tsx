@@ -28,7 +28,7 @@ export default function RootLayout({
               <MainNav />
             </div>
           </nav>
-          <main className="flex flex-col items-center">
+          <main className="flex flex-col items-center px-5">
             <div className="max-w-6xl w-full">{children}</div>
           </main>
         </ThemeProvider>
