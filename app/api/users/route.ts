@@ -31,3 +31,13 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json(newUser, { status: 201 });
 }
+
+export async function GET() {
+  const users = await prisma.user.findMany({
+    include: {
+      kanjiProgress: true,
+    },
+  });
+
+  return NextResponse.json(users);
+}
