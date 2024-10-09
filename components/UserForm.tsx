@@ -22,9 +22,10 @@ type UserFormData = z.infer<typeof userSchema>;
 
 interface Props {
   user?: User;
+  onUserSubmit: (newUser: User) => void;
 }
 
-const UserForm = ({ user }: Props) => {
+const UserForm = ({ user, onUserSubmit }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -36,10 +37,14 @@ const UserForm = ({ user }: Props) => {
     try {
       setIsSubmitting(true);
       setError("");
+      let newUser;
+
       if (user) {
         await axios.patch("/api/users/" + user.id, values);
       } else {
-        await axios.post("/api/users", values);
+        const response = await axios.post("/api/users", values);
+        newUser = response.data;
+        onUserSubmit(newUser);
       }
 
       setIsSubmitting(false);
