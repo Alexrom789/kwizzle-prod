@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/prisma/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
@@ -6,8 +6,6 @@ import DashChart from "@/components/DashChart";
 import PieChart from "@/components/PieChart";
 import { getServerSession } from "next-auth";
 import options from "./api/auth/[...nextauth]/options";
-
-const prisma = new PrismaClient();
 
 export default async function Dashboard() {
   const session = await getServerSession(options);
@@ -89,7 +87,7 @@ export default async function Dashboard() {
           </div>
         </div>
       </div>
-      {/* <div className="mb-4">
+      {/* TODO: Implement recently studied kanji feature on dashboard. <div className="mb-4">
       <h2 className="text-xl font-semibold mb-4">Recently Studied Kanji</h2>
       {kanjiProgress.length > 0 ? (
         <ul>

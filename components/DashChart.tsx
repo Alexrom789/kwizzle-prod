@@ -37,7 +37,7 @@ const DashChart = ({ data }: dataProps) => {
               axisLine={false}
             />
             <Tooltip />
-            <Bar dataKey="total" fill="#60A5FA" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="total" fill="#6f3bc4" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

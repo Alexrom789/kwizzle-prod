@@ -87,21 +87,20 @@ export default function Lesson() {
         setAttempts(0);
         setMessage(null);
       } else {
-        // If the answer is wrong
         if (attempts === 0) {
           // First wrong attempt, allow a retry
           setMessage("That's not quite right. Try Again!");
-          setAttempts(1); // Increment attempts to track second chance
+          setAttempts(1);
         } else {
           // Second wrong attempt, move on without updating level
-          setMessage(null); // Clear any message
+          setMessage(null);
           if (currentIndex === kanjiList.length - 1) {
-            setIsLessonComplete(true); // Mark lesson complete when the last kanji is reached
+            setIsLessonComplete(true);
           } else {
             setCurrentIndex((prev) => prev + 1);
           }
           setUserInput("");
-          setAttempts(0); // Reset attempts for next kanji
+          setAttempts(0);
         }
       }
     } catch (error) {
