@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { userSchema } from "@/ValidationSchemas/users";
 import prisma from "@/prisma/db";
 import bcrypt from "bcryptjs";
+import { KanjiLevel } from "@prisma/client";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -22,11 +23,27 @@ export async function POST(request: NextRequest) {
       { status: 409 }
     );
   }
+
   const hashPassword = await bcrypt.hash(body.password, 10);
   body.password = hashPassword;
 
   const newUser = await prisma.user.create({
     data: { ...body },
+  });
+
+  const kanjiList = await prisma.kanji.findMany({
+    take: 10,
+  });
+
+  // Create UserKanjiProgress entries for the new user
+  const userProgressData = kanjiList.map((kanji) => ({
+    level: KanjiLevel.NEW,
+    kanjiId: kanji.id,
+    userId: newUser.id,
+  }));
+
+  await prisma.userKanjiProgress.createMany({
+    data: userProgressData,
   });
 
   return NextResponse.json(newUser, { status: 201 });
