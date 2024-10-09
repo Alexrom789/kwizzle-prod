@@ -45,7 +45,7 @@ const UserForm = ({ user, onUserSubmit }: Props) => {
         const response = await axios.post("/api/users", values);
         newUser = response.data;
         if (onUserSubmit) {
-          onUserSubmit(newUser); // Call only if onUserSubmit is defined
+          onUserSubmit(newUser);
         }
       }
 
