@@ -12,11 +12,14 @@ const MainNav = async () => {
       <MainNavLinks role={session?.user.role} />
       <div className="flex items-center gap-2">
         {session ? (
-          <Link href="/api/auth/signout?callbackUrl=/" className="navbar-link">
+          <Link
+            href="/api/auth/signout?callbackUrl=/"
+            className="navbar-link mr-4"
+          >
             Logout
           </Link>
         ) : (
-          <Link href="/api/auth/signin" className="navbar-link">
+          <Link href="/api/auth/signin" className="navbar-link mr-4">
             Login
           </Link>
         )}
