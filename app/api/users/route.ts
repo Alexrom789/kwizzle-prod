@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Not Authenticated" }, { status: 401 });
   }
 
-  if (session.user.role !== "Admin") {
+  if (session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Not Admin" }, { status: 401 });
   }
 

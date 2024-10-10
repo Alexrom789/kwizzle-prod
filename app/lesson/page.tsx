@@ -42,8 +42,23 @@ export default function Lesson() {
   useEffect(() => {
     const fetchKanjiProgress = async () => {
       const response = await fetch("/api/kanji-progress");
-      const data = await response.json();
-      setKanjiList(data);
+      let kp = await response.json();
+      // Filter out INGRAINED kanji
+      kp = kp.filter((kanji: UserKanjiProgress) => kanji.level !== "INGRAINED");
+      // Ensure the user is shown 10 kanji by checking if we need to add more
+      if (kp.length < 10) {
+        const missingCount = 10 - kp.length;
+
+        // Fetch new kanji to fill the list (those not yet in the user's progress)
+        const newKanjiResponse = await fetch(
+          `/api/new-kanji?count=${missingCount}`
+        );
+        const newKanji = await newKanjiResponse.json();
+
+        kp = [...kp, ...newKanji];
+      }
+
+      setKanjiList(kp);
     };
 
     fetchKanjiProgress();

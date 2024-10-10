@@ -37,40 +37,6 @@ export async function GET(req: Request) {
       },
     });
 
-    // TODO: Filter out INGRAINED Kanji and Replace with next kanji from api.
-    // // Filter out kanji that are INGRAINED
-    // const filteredProgress = userProgress.filter(
-    //   (progress) => progress.level !== "INGRAINED"
-    // );
-
-    // // If we have fewer than 10 kanji, fetch more NEW kanji
-    // const neededCount = 10 - filteredProgress.length;
-    // if (neededCount > 0) {
-    //   const additionalKanji = await prisma.kanji.findMany({
-    //     where: {
-    //       NOT: {
-    //         id: {
-    //           in: filteredProgress.map((progress) => progress.kanjiId),
-    //         },
-    //       },
-    //     },
-    //     take: neededCount,
-    //     include: {
-    //       meanings: true,
-    //       kunyomi: true,
-    //       onyomi: true,
-    //       similarKanji: true,
-    //     },
-    //   });
-
-    //   // Combine filtered progress with new kanji
-    //   const combinedKanji = [
-    //     ...filteredProgress.map((progress) => progress.kanji),
-    //     ...additionalKanji,
-    //   ];
-    //   return NextResponse.json(combinedKanji);
-    // }
-
     // Ensure the returned data structure fits what your frontend expects
     return NextResponse.json(userProgress);
   } catch (error) {
@@ -108,13 +74,45 @@ export async function POST(req: Request) {
         Object.keys(levelMapping).length
       );
 
-      // Update the level
-      await prisma.userKanjiProgress.update({
+      // // Update the level
+      // await prisma.userKanjiProgress.update({
+      //   where: { id: kanjiProgress.id },
+      //   data: {
+      //     level: Object.keys(levelMapping)[newLevelIndex - 1] as KanjiLevel, // Convert back to string
+      //   },
+      // });
+      const updatedProgress = await prisma.userKanjiProgress.update({
         where: { id: kanjiProgress.id },
         data: {
-          level: Object.keys(levelMapping)[newLevelIndex - 1] as KanjiLevel, // Convert back to string
+          level: Object.keys(levelMapping)[newLevelIndex - 1] as KanjiLevel,
         },
       });
+
+      //
+      // Check if the new level is 'INGRAINED'
+      if (updatedProgress.level === "INGRAINED") {
+        // Find the next kanji that the user has not studied yet
+        const nextKanji = await prisma.kanji.findFirst({
+          where: {
+            userProgress: {
+              none: { userId },
+            },
+          },
+        });
+
+        if (nextKanji) {
+          // Add the new kanji to the user's progress
+          await prisma.userKanjiProgress.create({
+            data: {
+              userId,
+              kanjiId: nextKanji.id,
+              level: "NEW",
+            },
+          });
+        }
+      }
+
+      //
 
       return NextResponse.json({ message: "Progress updated successfully" });
     } else {
