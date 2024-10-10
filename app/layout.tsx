@@ -3,6 +3,7 @@ import "./globals.css";
 import "@/components/";
 import MainNav from "@/components/MainNav";
 import { ThemeProvider } from "@/components/theme-provider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: "Kwizzle - Spaced Repetition Learning App",
@@ -30,6 +31,7 @@ export default function RootLayout({
           </nav>
           <main className="flex flex-col items-center px-5">
             <div className="max-w-6xl w-full">{children}</div>
+            <SpeedInsights />
           </main>
         </ThemeProvider>
       </body>
