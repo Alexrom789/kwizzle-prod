@@ -2,6 +2,10 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import kwizzlelogo from "@/public/kwizzlelogo.svg";
+import kwizzlelogodark from "@/public/kwizzlelogodark.svg";
 
 const MainNavLinks = ({ role }: { role?: string }) => {
   const links = [
@@ -11,10 +15,23 @@ const MainNavLinks = ({ role }: { role?: string }) => {
   ];
 
   const currentPath = usePathname();
+  // Use next-themes to detect the current theme
+  const { theme, systemTheme } = useTheme();
+  const currentTheme = theme === "system" ? systemTheme : theme;
+
+  console.log("current", currentTheme);
+
   return (
     <div className="flex items-center gap-4">
       <Link href="/" className="mr-4">
-        KWIZZLE
+        <Image
+          key={currentTheme} // Force re-render when theme changes
+          src={currentTheme === "dark" ? kwizzlelogo : kwizzlelogodark}
+          alt="KwizzleLogo"
+          width={100}
+          height={100}
+          className="transform translate-y-[-8px]"
+        />
       </Link>
       {links
         .filter((link) => !link.adminOnly || role === "ADMIN")
