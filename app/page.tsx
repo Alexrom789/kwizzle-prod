@@ -34,6 +34,8 @@ export default async function Dashboard() {
     },
   });
 
+  const totalKanji = await prisma.kanji.count();
+
   const categories = [
     { name: "New", level: "NEW", color: "bg-green-600" },
     { name: "Learning", level: "LEARNING", color: "bg-yellow-500" },
@@ -44,10 +46,18 @@ export default async function Dashboard() {
   const kanjiByLevel = (level: string) =>
     kanjiProgress.filter((progress) => progress.level === level).length;
 
-  // Prepare chart data
+  const kanjiLevelsTotal = categories.reduce(
+    (acc, category) => acc + kanjiByLevel(category.level),
+    0
+  );
+
+  // Calculate QUEUED kanji (total kanji - sum of kanji in all levels)
+  const queuedKanji = totalKanji - kanjiLevelsTotal;
+
   const chartData = categories.map((category) => ({
     name: category.level,
-    total: kanjiByLevel(category.level),
+    total:
+      category.level === "NEW" ? queuedKanji : kanjiByLevel(category.level),
   }));
 
   return (
@@ -70,7 +80,12 @@ export default async function Dashboard() {
                 <CardTitle>{category.name}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p>{kanjiByLevel(category.level)} kanji</p>
+                <p>
+                  {category.level === "NEW"
+                    ? queuedKanji
+                    : kanjiByLevel(category.level)}{" "}
+                  kanji
+                </p>
               </CardContent>
             </Card>
           ))}
